@@ -1,6 +1,8 @@
-# Getting Started with Create React App
+WithU
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+-- WIP --
+
+Website to sync video from Youtube with friends.
 
 ## Available Scripts
 
