@@ -10,17 +10,11 @@ const Room = () => {
 
   return (
     <>
-      <Row>
+      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         <Col span={12}>
           <Player url={url} />
         </Col>
-        <Col
-          span={12}
-          style={{
-            maxHeight: 600,
-            overflowY: "scroll",
-          }}
-        >
+        <Col span={12}>
           <Chat />
         </Col>
       </Row>
