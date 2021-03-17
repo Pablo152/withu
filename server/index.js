@@ -23,25 +23,24 @@ app.get("/*", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("play", () => {
-    socket.emit("playing")
+    socket.broadcast.emit("playing")
   });
 
   socket.on("pause", () => {
-    socket.emit("paused")
+    socket.broadcast.emit("paused")
   });
 
   socket.on("seek", (data) => {
-    socket.emit("seeking", data)
+    socket.broadcast.emit("seeking", data)
   });
 
   socket.on("progress", (data) => {
-    socket.emit("progressing", data)
+    socket.broadcast.emit("progressing", data)
   });
 
   socket.on("message", (data) => {
-    console.log(data);
     const key = Math.random().toString(36).substr(2, 5);
-    socket.emit("messaging", data, key)
+    socket.broadcast.emit("messaging", data, key)
   })
 
 });
