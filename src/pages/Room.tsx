@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Player from "../components/Player";
 import Chat from "../components/Chat";
 import { useParams } from "react-router-dom";
-import { Col, Row, Divider, Button } from "antd";
+import { message, Col, Row, Divider, Button } from "antd";
 import { UsergroupAddOutlined } from "@ant-design/icons";
 import socket from "../socket/socket";
 
@@ -15,9 +15,14 @@ const Room = () => {
     socket.emit("join-room", roomId);
   });
 
+  const success = () => {
+    navigator.clipboard.writeText(window.location.href)
+    message.success("Link has been copied to clipboard!");
+  };
+
   return (
     <>
-      <Button ghost icon={<UsergroupAddOutlined />}>
+      <Button ghost icon={<UsergroupAddOutlined />} onClick={success}>
         Share!
       </Button>
       <Row>
