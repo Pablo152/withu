@@ -1,12 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import socket from "../socket/socket";
+import secondsToHms from "../lib/seconds-to-hms"
+import "./Player.css"
 
-const Player = ({ url }: any) => {
+import { Slider } from "antd";
+
+const Player = ({ url, roomId }: any) => {
   const refContainer = useRef<ReactPlayer>(null);
 
   const [refState, setRefState] = useState<ReactPlayer>();
   const [progress, setProgress] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
   const [play, setPlay] = useState<boolean>(false);
 
   useEffect(() => {
@@ -14,23 +19,41 @@ const Player = ({ url }: any) => {
     if (reactPlayerRef) {
       setRefState(reactPlayerRef);
     }
-  }, [refContainer]);
+  }, [refContainer, refState]);
+
+  const handleDuration = (state: number): void => {
+    setDuration(state);
+  };
 
   // Event emitters
   const handleProgress = (state: any): void => {
-    socket.emit("progress", state.playedSeconds);
+    socket.emit("progress", state.playedSeconds, roomId);
+    setProgress(state.playedSeconds);
   };
 
   const handlePause = (): void => {
-    socket.emit("pause");
+    socket.emit("pause", roomId);
   };
 
   const handlePlay = (): void => {
-    socket.emit("play");
+    socket.emit("play", roomId);
+  };
+
+  const handleStart = (): void => {
+    socket.emit("start", roomId);
+  };
+
+  const handleSliderChange = (value: number) => {
+    socket.emit("seek", value, roomId);
+    refState?.seekTo(value);
   };
 
   // Event listeners
   socket.on("playing", () => {
+    setPlay(true);
+  });
+
+  socket.on("starting", () => {
     setPlay(true);
   });
 
@@ -39,23 +62,41 @@ const Player = ({ url }: any) => {
   });
 
   socket.on("progressing", (state: number) => {
-    if (progress < state - 3 || progress > state + 3) {
-      refState?.seekTo(state);
-    }
     setProgress(state);
+  });
+
+  socket.on("seeking", (state: number) => {
+    refState?.seekTo(state);
   });
 
   return (
     <>
-      <ReactPlayer
-        ref={refContainer}
-        url={url}
-        playing={play}
-        controls={true}
-        onProgress={handleProgress}
-        onPause={handlePause}
-        onPlay={handlePlay}
-      />
+      <div className="player-wrapper">
+        <ReactPlayer
+          className="react-player"
+          ref={refContainer}
+          url={url}
+          playing={play}
+          controls={false}
+          width="100%"
+          height="100%"
+          onStart={handleStart}
+          onProgress={handleProgress}
+          onPause={handlePause}
+          onPlay={handlePlay}
+          onDuration={handleDuration}
+        />
+      </div>
+      <div>
+        {" "}
+        <Slider
+          value={progress}
+          max={duration}
+          onChange={handleSliderChange}
+        ></Slider>
+        <p>{progress === 0 ? "Control player seek here" : ""}</p>
+        {secondsToHms(progress)}
+      </div>
     </>
   );
 };

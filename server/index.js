@@ -1,5 +1,4 @@
 const express = require("express")
-
 const app = express();
 const path = require("path")
 const cors = require("cors");
@@ -22,27 +21,35 @@ app.get("/*", (req, res) => {
 
 
 io.on("connection", (socket) => {
-  socket.on("play", () => {
-    socket.broadcast.emit("playing")
+  socket.on("join-room", (data) => {
+    socket.join(data)
   });
 
-  socket.on("pause", () => {
-    socket.broadcast.emit("paused")
+  socket.on("play", (data) => {
+    socket.to(data).emit("playing")
   });
 
-  socket.on("seek", (data) => {
-    socket.broadcast.emit("seeking", data)
+  socket.on("pause", (data) => {
+    socket.to(data).emit("paused")
   });
 
   socket.on("progress", (data) => {
-    socket.broadcast.emit("progressing", data)
+    socket.to(data).emit("progressing", data)
   });
 
-  socket.on("message", (data) => {
+  socket.on("start", (data) => {
+    socket.to(data).emit("starting", data)
+  });
+
+  socket.on("seek", (data, channel) => {
+    socket.to(channel).emit("seeking", data)
+  });
+
+  socket.on("message", (data, channel) => {
     const key = Math.random().toString(36).substr(2, 5);
     const time = new Date();
     const timeFormattedString = `${time.getHours()}:${time.getMinutes()}`
-    socket.broadcast.emit("messaging", data, key, timeFormattedString)
+    socket.to(channel).emit("messaging", data, key, timeFormattedString)
   })
 
 });

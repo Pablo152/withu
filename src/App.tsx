@@ -8,6 +8,8 @@ import "./App.css";
 import Room from "./pages/Room";
 import Home from "./pages/Home";
 
+import generateId from "./lib/id-generator"
+
 const { Title } = Typography;
 
 function App() {
@@ -15,7 +17,8 @@ function App() {
   const [query, setQuery] = useState<string>("");
 
   const searchVideo = () => {
-    history.push(`/room/${encodeURIComponent(query)}`);
+    const roomId = generateId();
+    history.push(`/room/${roomId}/${encodeURIComponent(query)}`);
   };
 
   return (
@@ -49,7 +52,7 @@ function App() {
               <Route exact path="/">
                 <Home />
               </Route>
-              <Route path="/room/:url">
+              <Route path="/room/:roomId/:url">
                 <Room />
               </Route>
             </Switch>

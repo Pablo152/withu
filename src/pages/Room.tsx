@@ -1,21 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Player from "../components/Player";
 import Chat from "../components/Chat";
 import { useParams } from "react-router-dom";
-import { Col, Row } from "antd";
+import { Col, Row, Divider, Button } from "antd";
+import { UsergroupAddOutlined } from "@ant-design/icons";
+import socket from "../socket/socket";
 
 const Room = () => {
   const params = useParams<any | null>();
   const url = decodeURIComponent(params.url);
+  const roomId = params.roomId;
+
+  useEffect(() => {
+    socket.emit("join-room", roomId);
+  });
 
   return (
     <>
-      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        <Col span={12}>
-          <Player url={url} />
+      <Button ghost icon={<UsergroupAddOutlined />}>
+        Share!
+      </Button>
+      <Row>
+        <Col span={11}>
+          <Player url={url} roomId={roomId} />
         </Col>
+        <Divider type="vertical"></Divider>
         <Col span={12}>
-          <Chat />
+          <Chat roomId={roomId} />
         </Col>
       </Row>
     </>

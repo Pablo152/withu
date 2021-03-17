@@ -3,7 +3,7 @@ import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import socket from "../socket/socket";
 
-const Chat = () => {
+const Chat = ({roomId}: any) => {
   const [message, setMessage] = useState<string>("");
   const [sentMessages, setSentMessages] = useState<Array<any>>([]);
 
@@ -12,7 +12,7 @@ const Chat = () => {
   };
 
   const handleSendMessage = () => {
-    socket.emit("message", message);
+    socket.emit("message", message, roomId);
     if (message.trim() !== "") {
       let newArr = Array.from(sentMessages);
       const key = Math.random().toString(36).substr(2, 5);
@@ -47,12 +47,13 @@ const Chat = () => {
         style={{
           display: "flex",
           flexDirection: "column-reverse",
-          maxHeight: 400,
-          overflowY: "scroll",
+          minHeight:422.5,
+          maxHeight: 422.5,
+          overflowY: "auto",
         }}
       >
         <div>
-          {sentMessages?.map((message) => {
+          {sentMessages?.length === 0 ? <h4>Chat here! :)</h4> : sentMessages?.map((message) => {
             return (
               <div
                 style={{
@@ -64,7 +65,7 @@ const Chat = () => {
                   margin: 10,
                   width: 500,
                   maxHeight: 400,
-                  overflowY: "scroll",
+                  overflowY: "auto",
                 }}
                 key={message.key}
               >
@@ -95,6 +96,9 @@ const Chat = () => {
       </div>
       <div>
         <TextArea
+          style={{
+            borderRadius: 4
+          }}
           value={message}
           onPressEnter={handleSendMessage}
           onChange={handleMessage}
