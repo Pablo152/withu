@@ -18,6 +18,7 @@ const Chat = () => {
   };
 
   socket.on("messaging", (data: string, key: string) => {
+    console.log(data);
     let newArr = Array.from(sentMessages);
     newArr.push({
       message: data,
