@@ -39,6 +39,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", (data) => {
+    console.log(data);
     const key = Math.random().toString(36).substr(2, 5);
     socket.emit("messaging", data, key)
   })
