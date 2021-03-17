@@ -15,6 +15,14 @@ const Chat = () => {
 
   const handleSendMessage = () => {
     socket.emit("message", message);
+    let newArr = Array.from(sentMessages);
+    const key = Math.random().toString(36).substr(2, 5)
+    newArr.push({
+      message: message,
+      type: "client",
+      key,
+    });
+    setSentMessages(newArr);
   };
 
   socket.on("messaging", (data: string, key: string) => {
@@ -22,6 +30,7 @@ const Chat = () => {
     let newArr = Array.from(sentMessages);
     newArr.push({
       message: data,
+      type: "socket",
       key,
     });
     setSentMessages(newArr);
@@ -33,8 +42,8 @@ const Chat = () => {
         return (
           <div
             style={{
-              float: "right",
-              backgroundColor: "#f1f1f1",
+              float: message.type === "client" ? "right" : "left",
+              backgroundColor: message.type === "client" ? "#f1f1f1" : "gray",
               borderRadius: 5,
               padding: 5,
               margin: 10,
