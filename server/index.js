@@ -1,4 +1,7 @@
-const app = require("express")();
+const express = require("express")
+
+const app = express();
+const path = require("path")
 const cors = require("cors");
 app.use(cors());
 
@@ -10,6 +13,13 @@ const options = {
   },
 };
 const io = require("socket.io")(httpServer, options);
+
+app.use(express.static(path.join(__dirname, '../build')));
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, '../build/index.html'));
+})
+
 
 io.on("connection", (socket) => {
   socket.on("play", () => {
