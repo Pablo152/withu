@@ -3,6 +3,8 @@ import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import socket from "../socket/socket";
 
+console.log(socket);
+
 const Chat = () => {
   const [message, setMessage] = useState<string>("");
   const [sentMessages, setSentMessages] = useState<Array<any>>([]);
